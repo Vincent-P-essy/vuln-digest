@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>vuln-digest — {{ date }}</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background: #0d1117;
+      color: #c9d1d9;
+      line-height: 1.6;
+    }
+    header {
+      background: #161b22;
+      border-bottom: 1px solid #30363d;
+      padding: 1.5rem 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    header h1 { font-size: 1.4rem; color: #58a6ff; letter-spacing: 0.5px; }
+    header .date { font-size: 0.85rem; color: #8b949e; }
+    .container { max-width: 1200px; margin: 0 auto; padding: 2rem; }
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+    .stat-card {
+      background: #161b22;
+      border: 1px solid #30363d;
+      border-radius: 8px;
+      padding: 1.25rem;
+      text-align: center;
+    }
+    .stat-card .value { font-size: 2rem; font-weight: 700; }
+    .stat-card .label { font-size: 0.78rem; color: #8b949e; text-transform: uppercase; letter-spacing: 0.5px; margin-top: 0.25rem; }
+    .critical .value { color: #f85149; }
+    .high     .value { color: #e3b341; }
+    .medium   .value { color: #d29922; }
+    .banking  .value { color: #3fb950; }
+    .exploited .value { color: #ff7b72; }
+    section { margin-bottom: 2.5rem; }
+    h2 {
+      font-size: 1rem;
+      font-weight: 600;
+      color: #e6edf3;
+      border-left: 3px solid #58a6ff;
+      padding-left: 0.75rem;
+      margin-bottom: 1rem;
+    }
+    h2.danger { border-color: #f85149; }
+    h2.warning { border-color: #e3b341; }
+    h2.banking { border-color: #3fb950; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.85rem;
+    }
+    thead th {
+      background: #21262d;
+      color: #8b949e;
+      text-align: left;
+      padding: 0.6rem 0.8rem;
+      font-weight: 500;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+    }
+    tbody tr { border-bottom: 1px solid #21262d; }
+    tbody tr:hover { background: #1c2128; }
+    tbody td { padding: 0.6rem 0.8rem; vertical-align: top; }
+    .badge {
+      display: inline-block;
+      padding: 0.15rem 0.55rem;
+      border-radius: 20px;
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.3px;
+    }
+    .badge-critical { background: rgba(248,81,73,0.15); color: #f85149; border: 1px solid rgba(248,81,73,0.4); }
+    .badge-high     { background: rgba(227,179,65,0.15); color: #e3b341; border: 1px solid rgba(227,179,65,0.4); }
+    .badge-medium   { background: rgba(210,153,34,0.12); color: #d29922; border: 1px solid rgba(210,153,34,0.3); }
+    .badge-low      { background: rgba(139,148,158,0.15); color: #8b949e; border: 1px solid rgba(139,148,158,0.3); }
+    .badge-banking  { background: rgba(63,185,80,0.12); color: #3fb950; border: 1px solid rgba(63,185,80,0.3); }
+    .badge-exploited { background: rgba(255,123,114,0.15); color: #ff7b72; border: 1px solid rgba(255,123,114,0.4); }
+    .cve-id { font-family: 'Courier New', monospace; font-size: 0.82rem; color: #58a6ff; }
+    .score { font-weight: 700; }
+    .description { max-width: 500px; color: #8b949e; font-size: 0.8rem; }
+    footer {
+      text-align: center;
+      padding: 2rem;
+      color: #484f58;
+      font-size: 0.78rem;
+      border-top: 1px solid #21262d;
+    }
+    .empty { color: #484f58; font-style: italic; padding: 1rem 0; }
+  </style>
+</head>
+<body>
+<header>
+  <h1>🔐 vuln-digest</h1>
+  <span class="date">Daily report — {{ date }}</span>
+</header>
+
+<div class="container">
+
+  <!-- Summary cards -->
+  <div class="stats-grid">
+    <div class="stat-card critical">
+      <div class="value">{{ stats.by_priority.CRITICAL }}</div>
+      <div class="label">Critical</div>
+    </div>
+    <div class="stat-card high">
+      <div class="value">{{ stats.by_priority.HIGH }}</div>
+      <div class="label">High</div>
+    </div>
+    <div class="stat-card medium">
+      <div class="value">{{ stats.by_priority.MEDIUM }}</div>
+      <div class="label">Medium</div>
+    </div>
+    <div class="stat-card banking">
+      <div class="value">{{ stats.banking_relevant }}</div>
+      <div class="label">Banking-relevant</div>
+    </div>
+    <div class="stat-card exploited">
+      <div class="value">{{ stats.actively_exploited }}</div>
+      <div class="label">Actively Exploited</div>
+    </div>
+    <div class="stat-card">
+      <div class="value" style="color:#c9d1d9">{{ stats.total }}</div>
+      <div class="label">Total CVEs</div>
+    </div>
+  </div>
+
+  <!-- Critical vulnerabilities -->
+  <section>
+    <h2 class="danger">🚨 Critical Vulnerabilities ({{ critical_vulns | length }})</h2>
+    {% if critical_vulns %}
+    <table>
+      <thead>
+        <tr>
+          <th>CVE ID</th>
+          <th>Description</th>
+          <th>Score</th>
+          <th>Source</th>
+          <th>Flags</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for v in critical_vulns %}
+        <tr>
+          <td><span class="cve-id">{{ v.cve_id or v.ghsa_id or '—' }}</span></td>
+          <td class="description">{{ (v.description or v.short_description or v.summary or '')[:200] }}</td>
+          <td><span class="score" style="color:#f85149">{{ v.business_score }}</span></td>
+          <td><small>{{ v.source }}</small></td>
+          <td>
+            {% if v.is_exploited %}<span class="badge badge-exploited">KEV</span> {% endif %}
+            {% if v.is_banking_relevant %}<span class="badge badge-banking">🏦</span>{% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% else %}
+    <p class="empty">No critical vulnerabilities today.</p>
+    {% endif %}
+  </section>
+
+  <!-- High vulnerabilities -->
+  <section>
+    <h2 class="warning">⚠️ High Vulnerabilities ({{ high_vulns | length }})</h2>
+    {% if high_vulns %}
+    <table>
+      <thead>
+        <tr>
+          <th>CVE ID</th>
+          <th>Description</th>
+          <th>Score</th>
+          <th>Source</th>
+          <th>Flags</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for v in high_vulns %}
+        <tr>
+          <td><span class="cve-id">{{ v.cve_id or v.ghsa_id or '—' }}</span></td>
+          <td class="description">{{ (v.description or v.short_description or v.summary or '')[:200] }}</td>
+          <td><span class="score" style="color:#e3b341">{{ v.business_score }}</span></td>
+          <td><small>{{ v.source }}</small></td>
+          <td>
+            {% if v.is_exploited %}<span class="badge badge-exploited">KEV</span> {% endif %}
+            {% if v.is_banking_relevant %}<span class="badge badge-banking">🏦</span>{% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% else %}
+    <p class="empty">No high vulnerabilities today.</p>
+    {% endif %}
+  </section>
+
+  <!-- Banking-relevant section -->
+  <section>
+    <h2 class="banking">🏦 Banking-Relevant Highlights ({{ banking_vulns | length }})</h2>
+    {% if banking_vulns %}
+    <table>
+      <thead>
+        <tr>
+          <th>CVE ID</th>
+          <th>Description</th>
+          <th>Priority</th>
+          <th>Score</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for v in banking_vulns %}
+        <tr>
+          <td><span class="cve-id">{{ v.cve_id or v.ghsa_id or '—' }}</span></td>
+          <td class="description">{{ (v.description or v.short_description or v.summary or '')[:200] }}</td>
+          <td>
+            <span class="badge badge-{{ v.priority | lower }}">{{ v.priority }}</span>
+          </td>
+          <td><span class="score">{{ v.business_score }}</span></td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% else %}
+    <p class="empty">No banking-relevant vulnerabilities today.</p>
+    {% endif %}
+  </section>
+
+</div>
+
+<footer>
+  Generated by <strong>vuln-digest</strong> · Sources: NVD, CISA KEV, GitHub Advisories ·
+  {{ date }} · Vincent Plessy
+</footer>
+</body>
+</html>

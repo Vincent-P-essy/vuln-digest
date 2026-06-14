@@ -1,0 +1,28 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.Python
+env/
+venv/
+.venv/
+pip-log.txt
+.tox/
+.coverage
+htmlcov/
+.pytest_cache/
+*.egg-info/
+dist/
+build/
+
+# Environment
+.env
+
+# Generated reports (committed only if intentional)
+reports/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
