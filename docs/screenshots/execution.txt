@@ -1,0 +1,21 @@
+$ python -m pytest -v --tb=short tests/test_scorer.py
+======================================= test session starts ========================================
+platform linux -- Python 3.12.14, pytest-8.4.2, pluggy-1.6.0 -- python
+cachedir: .pytest_cache
+rootdir: vuln-digest
+plugins: anyio-4.15.1, asyncio-1.4.0, respx-0.23.1
+asyncio: mode=Mode.STRICT, debug=False, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function
+collecting ... collected 8 items
+
+tests/test_scorer.py::test_score_uses_cvss_score PASSED                                      [ 12%]
+tests/test_scorer.py::test_score_falls_back_to_severity_label PASSED                         [ 25%]
+tests/test_scorer.py::test_score_exploited_adds_bonus PASSED                                 [ 37%]
+tests/test_scorer.py::test_score_banking_keyword_adds_bonus PASSED                           [ 50%]
+tests/test_scorer.py::test_score_capped_at_10 PASSED                                         [ 62%]
+tests/test_scorer.py::test_score_no_data PASSED                                              [ 75%]
+tests/test_scorer.py::test_rank_sorts_descending PASSED                                      [ 87%]
+tests/test_scorer.py::test_banking_keywords_present PASSED                                   [100%]
+
+======================================== 8 passed in 0.01s =========================================
+
+Exit: 0

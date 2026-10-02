@@ -10,6 +10,12 @@ Security analysts at financial institutions spend significant time every morning
 
 ---
 
+## Execution preview
+
+![vuln-digest execution](docs/screenshots/execution.png)
+
+Local execution of `python -m pytest -v --tb=short tests/test_scorer.py`. The input and output shown come from the repository example or test fixtures. [Verification](docs/verification.md).
+
 ## Why this project?
 
 | Manual process | With vuln-digest |
