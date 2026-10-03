@@ -10,12 +10,6 @@ Security analysts at financial institutions spend significant time every morning
 
 ---
 
-## Execution preview
-
-![vuln-digest execution](docs/screenshots/execution.png)
-
-Local execution of `python -m pytest -v --tb=short tests/test_scorer.py`. The input and output shown come from the repository example or test fixtures. [Verification](docs/verification.md).
-
 ## Why this project?
 
 | Manual process | With vuln-digest |
@@ -242,5 +236,5 @@ vuln-digest → reports/YYYY-MM-DD/digest.json → cyber-dashboard
 
 ## Author
 
-**Vincent Plessy** — [vincent.plessy12@gmail.com](mailto:vincent.plessy12@gmail.com)  
+**Vincent Plessy** — [GitHub](https://github.com/Vincent-P-essy)
 Part of the [cyber-portfolio](https://github.com/vincent-p-essy) project ecosystem.
