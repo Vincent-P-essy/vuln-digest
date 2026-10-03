@@ -2,6 +2,7 @@
 
 import pytest
 import responses as responses_lib
+from requests.exceptions import ConnectionError
 
 from collectors.nvd import NVD_BASE_URL, NVDCollector
 

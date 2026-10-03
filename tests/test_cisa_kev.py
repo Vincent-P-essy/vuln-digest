@@ -3,6 +3,7 @@
 from datetime import datetime, timedelta, timezone
 
 import responses as responses_lib
+from requests.exceptions import ConnectionError
 
 from collectors.cisa_kev import CISA_KEV_URL, CISAKEVCollector
 
